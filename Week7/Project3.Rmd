@@ -1,0 +1,71 @@
+---
+title: "Project3"
+author: "Samriti Malhotra"
+date: "3/14/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(XML)
+library(RJSONIO)
+library(jsonlite)
+library(dplyr)
+
+
+
+
+#########################XML##################################################
+#read
+doc_xml <- xmlParse("books1.xml")
+root <- xmlRoot(doc_xml)
+title <- xpathSApply(doc_xml, "//book", xmlGetAttr, "title")
+publisher <- xpathSApply(doc_xml, "//book", xmlGetAttr, "publisher")
+isbn <- xpathSApply(doc_xml, "//book", xmlGetAttr, "isbn")
+genre <- xpathSApply(doc_xml, "//book", xmlGetAttr, "genre")
+copyright <- xpathSApply(doc_xml, "//book", xmlGetAttr, "copyright")
+lang <- xpathSApply(doc_xml, "//book", xmlGetAttr, "lang")
+
+
+
+xmldf <- data.frame(lang = unlist(lang), 
+                    timestamp = unlist(copyright), 
+                    title = unlist(title), 
+                    (rbind(xmlSApply(root[[3]], xmlValue),xmlSApply(root[[2]], xmlValue),xmlSApply(root[[1]], xmlValue))),
+                    publisher = unlist(publisher), 
+                    isbn = unlist(isbn), 
+                    genre = unlist(genre))
+
+xmldf
+
+#########################END XML##################################################
+
+
+#########################HTML##################################################
+doc2 <- htmlParse("books.html")
+tableNodes <- getNodeSet(doc2, "//table")
+myTable <- readHTMLTable(tableNodes[[1]] )
+myTable
+#########################HTML##################################################
+
+
+doc_json <- jsonlite::fromJSON("book.json") 
+df <- unlist(doc_json[,4])
+
+c(unlist(doc_json[,4])[1],unlist(doc_json[,4])[2],paste(unlist(doc_json[,3]),unlist(doc_json[,4]),sep=".")
+df[4]
+
+#doc_json$author <- lapply(doc_json$author,strsplit(as.character(doc_json$rownames), '[\\"]'))
+
+#df <- rbind(doc_json[,1] , doc_json[,2] , doc_json[,3] , unlist(doc_json[,4]) , doc_json[,5] , doc_json[,6])  
+
+class(df)
+df
+```
+
